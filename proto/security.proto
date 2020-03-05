@@ -1,0 +1,113 @@
+syntax = "proto3";
+option go_package = "proto";
+package github.tawakhal.openapi.proto;
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+// This global config
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+	info: {
+		title: "Open API using GRPC Gateway";
+		version: "1.0";
+		contact: {
+			name: "Olgi Tawakhal";
+			url: "https://github.com/tawakhal/open-api";
+			email: "tawkhal95@gmail.com";
+        }
+    };
+    // This list of protocol example (HTTP etc..) 
+    schemes: HTTP;
+    schemes: HTTPS;
+    // Type of request
+    consumes: "application/json";
+    // Type of response
+    produces: "application/json";
+    // Base Path of this service
+    base_path: "/v1/security/";
+
+    // Create secuirty for access this service
+    security_definitions: {
+        security: {
+            key: "bearer"
+            value: {
+                type: TYPE_API_KEY
+                in: IN_HEADER
+                name: "Authorization"
+                description: "Authentication token, prefixed by Bearer: Bearer <token>"
+            }
+        }
+    };
+    security: {
+        security_requirement: {
+            key: "bearer"
+        }
+    };
+};
+
+message LoginRequest{
+    // value of username when want login
+    string username = 1;
+    // value of password when want login
+    string password = 2;
+}
+
+message GetUserInfoRequest{
+    // this user uuid MSB which want to get
+    uint64 msb = 1;
+    // this user uuid LSB which want to get
+    uint64 lsb = 2;
+}
+
+message Error{
+    // info code of system
+    int32 code = 1;
+    // info field error
+    string field = 2;
+    // information error message
+    string message = 3;
+}
+
+message Response {
+    // data is JSON 
+    // for example : if you calling login this will send json token etc...
+    string data = 1;
+    // Info of response code
+    // int32 code = 2;
+    // Infomation message
+    // string message = 3;
+    // List of errors
+    // repeated Error errors = 4;
+}
+
+service SecurityService{
+    rpc Login (LoginRequest) returns (Response){
+        option (google.api.http) = {
+            post: "/v1/security/login"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            security: {
+            }
+            description:"Untuk Login"
+            operation_id:"123",
+            consumes: ["application/json"]
+            produces: ["application/json"]
+            schemes: ["HTTPS"]
+            responses: {
+                key: "200"
+				value: {
+					examples: {
+						key: "application/json"
+						value: '{"data": "isi token disini"}'
+					}
+				}
+			}
+        };
+    }
+    rpc GetUserInfoByUUID (GetUserInfoRequest) returns (Response){
+        option (google.api.http) = {
+            get: "/v1/security/user/{msb}/{lsb}"
+        };
+    }
+}

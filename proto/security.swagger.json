@@ -1,0 +1,122 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Open API using GRPC Gateway",
+    "version": "1.0",
+    "contact": {
+      "name": "Olgi Tawakhal",
+      "url": "https://github.com/tawakhal/open-api",
+      "email": "tawkhal95@gmail.com"
+    }
+  },
+  "basePath": "/v1/security/",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/security/login": {
+      "post": {
+        "description": "Untuk Login",
+        "operationId": "Login",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoLoginRequest"
+            }
+          }
+        ],
+        "tags": [
+          "SecurityService"
+        ],
+        "security": []
+      }
+    },
+    "/v1/security/user/{msb}/{lsb}": {
+      "get": {
+        "operationId": "GetUserInfoByUUID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openapiprotoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "msb",
+            "description": "this user uuid MSB which want to get",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "lsb",
+            "description": "this user uuid LSB which want to get",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "SecurityService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "openapiprotoResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "description": "data is JSON \nfor example : if you calling login this will send json token etc..."
+        }
+      }
+    },
+    "protoLoginRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "title": "value of username when want login"
+        },
+        "password": {
+          "type": "string",
+          "title": "value of password when want login"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearer": {
+      "type": "apiKey",
+      "description": "Authentication token, prefixed by Bearer: Bearer \u003ctoken\u003e",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ]
+}
